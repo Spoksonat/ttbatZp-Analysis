@@ -1,0 +1,5 @@
+/home/thanatos/resultados/resultados/Zprime_b_b_M_350p0_gl_1_gh_1_kv_0p0/Events/run_01/unweighted_events.lhe signal1
+/home/thanatos/Zprime_b_b_M_1000p0_gl_1_gh_1_kv_0p0/Zprime_b_b_M_1000p0_gl_1_gh_1_kv_0p0/Events/run_01/unweighted_events.lhe.gz signal2
+/home/thanatos/bkg_1/Events/run_01/unweighted_events.lhe.gz bkg1
+/home/thanatos/bkg_2/Events/run_01/unweighted_events.lhe.gz bkg2
+/home/thanatos/bkg_3/Events/run_01/unweighted_events.lhe.gz bkg3
