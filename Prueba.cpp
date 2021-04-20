@@ -10,7 +10,6 @@ using namespace std;
 // Initialize
 // function called one time at the beginning of the analysis
 // -----------------------------------------------------------------------------
-
 bool Prueba::Initialize(const MA5::Configuration& cfg, const std::map<std::string,std::string>& parameters)
 {
   cout << "BEGIN Initialization" << endl;
@@ -62,6 +61,9 @@ bool Prueba::Initialize(const MA5::Configuration& cfg, const std::map<std::strin
   Manager()->AddHisto("sdETA_b1b2", 100, -8.0,8.0); /*Name, bins, x_initial, x_final*/
   plot_sdETA_b1b2 = new TH1F("sdETA_b1b2", "sdETA_b1b2", 100, -8.0,8.0);
 
+  Manager()->AddHisto("PT_dijet", 100, 0.0,1000.0); /*Name, bins, x_initial, x_final*/
+  plot_PT_dijet = new TH1F("PT_dijet", "PT_dijet", 100, 0.0, 1000.0);
+
   Manager()->AddHisto("N_Merged", 3, 0.0,4.0); /*Name, bins, x_initial, x_final*/
   plot_N_Merged = new TH1F("N_Merged", "N_Merged", 3, 0.0,4.0);
 
@@ -73,6 +75,15 @@ bool Prueba::Initialize(const MA5::Configuration& cfg, const std::map<std::strin
 
   Manager()->AddHisto("N_fullyMerged", 100, 0.0,2.0); /*Name, bins, x_initial, x_final*/
   plot_N_fullyMerged = new TH1F("N_fullyMerged", "N_fullyMerged", 100, 0.0,2.0);
+
+  Manager()->AddHisto("PT_dijet_no", 100, 0.0,1000.0); /*Name, bins, x_initial, x_final*/
+  plot_PT_dijet_no = new TH1F("PT_dijet_no", "PT_dijet_no", 100, 0.0, 1000.0);
+
+  Manager()->AddHisto("ETA_dijet_no", 100, -8.0,8.0); /*Name, bins, x_initial, x_final*/
+  plot_ETA_dijet_no = new TH1F("ETA_dijet_no", "ETA_dijet_no", 100, -8.0,8.0);
+
+  Manager()->AddHisto("M_dijet_no", 100, 0.0,100.0); /*Name, bins, x_initial, x_final*/
+  plot_M_dijet_no = new TH1F("M_dijet_no", "M_dijet_no", 100, -0.0,100.0);
 
   Manager()->AddHisto("PT_dijet_partially", 100, 0.0,1000.0); /*Name, bins, x_initial, x_final*/
   plot_PT_dijet_partially = new TH1F("PT_dijet_partially", "PT_dijet_partially", 100, 0.0, 1000.0);
@@ -107,6 +118,30 @@ bool Prueba::Initialize(const MA5::Configuration& cfg, const std::map<std::strin
   Manager()->AddHisto("ETA_b_not_used", 100, -8.0,8.0); /*Name, bins, x_initial, x_final*/
   plot_ETA_b_not_used = new TH1F("ETA_b_not_used", "ETA_b_not_used", 100, -8.0,8.0);
 
+  Manager()->AddHisto("PT_b_not_used_diff", 100, 0.0,1000.0); /*Name, bins, x_initial, x_final*/
+  plot_PT_b_not_used_diff = new TH1F("PT_b_not_used_diff", "PT_b_not_used_diff", 100, 0.0, 1000.0);
+
+  Manager()->AddHisto("ETA_b_not_used_diff", 100, -8.0,8.0); /*Name, bins, x_initial, x_final*/
+  plot_ETA_b_not_used_diff = new TH1F("ETA_b_not_used_diff", "ETA_b_not_used_diff", 100, -8.0,8.0);
+
+  Manager()->AddHisto("M_b_not_used_diff", 100, 0.0,1100.0); /*Name, bins, x_initial, x_final*/
+  plot_M_b_not_used_diff = new TH1F("M_b_not_used_diff", "M_b_not_used_diff", 100, 0.0,1100.0);
+
+  Manager()->AddHisto("PT_b_not_used_indiv", 100, 0.0,1000.0); /*Name, bins, x_initial, x_final*/
+  plot_PT_b_not_used_indiv = new TH1F("PT_b_not_used_indiv", "PT_b_not_used_indiv", 100, 0.0, 1000.0);
+
+  Manager()->AddHisto("ETA_b_not_used_indiv", 100, -8.0,8.0); /*Name, bins, x_initial, x_final*/
+  plot_ETA_b_not_used_indiv = new TH1F("ETA_b_not_used_indiv", "ETA_b_not_used_indiv", 100, -8.0,8.0);
+
+  Manager()->AddHisto("PT_b1b2", 100, 0.0,1000.0); /*Name, bins, x_initial, x_final*/
+  plot_PT_b1b2 = new TH1F("PT_b1b2", "PT_b1b2", 100, 0.0, 1000.0);
+
+  Manager()->AddHisto("ETA_b1b2", 100, -8.0,8.0); /*Name, bins, x_initial, x_final*/
+  plot_ETA_b1b2 = new TH1F("ETA_b1b2", "ETA_b1b2", 100, -8.0,8.0);
+
+  Manager()->AddHisto("M_b1b2", 100, 0.0,1100.0); /*Name, bins, x_initial, x_final*/
+  plot_M_b1b2 = new TH1F("M_b1b2", "M_b1b2", 100, 0.0,1100.0);
+
   Manager()->AddHisto("sdPHI_lMET", 100, -8.0,8.0); /*Name, bins, x_initial, x_final*/
   plot_sdPHI_lMET = new TH1F("sdPHI_lMET", "sdPHI_lMET", 100, -8.0,8.0);
 
@@ -132,10 +167,14 @@ void Prueba::Finalize(const SampleFormat& summary, const std::vector<SampleForma
   plot_PT_b1->SetLineStyle(1);
   plot_MET->SetLineStyle(1);
   plot_sdETA_b1b2->SetLineStyle(1);
+  plot_PT_dijet->SetLineStyle(1);
   plot_N_Merged->SetLineStyle(1);
   plot_N_notMerged->SetLineStyle(1);
   plot_N_partiallyMerged->SetLineStyle(1);
   plot_N_fullyMerged->SetLineStyle(1);
+  plot_PT_dijet_no->SetLineStyle(1);
+  plot_ETA_dijet_no->SetLineStyle(1);
+  plot_M_dijet_no->SetLineStyle(1);
   plot_PT_dijet_partially->SetLineStyle(1);
   plot_ETA_dijet_partially->SetLineStyle(1);
   plot_M_dijet_partially->SetLineStyle(1);
@@ -147,6 +186,14 @@ void Prueba::Finalize(const SampleFormat& summary, const std::vector<SampleForma
   plot_M_b_dijet_fully->SetLineStyle(1);
   plot_PT_b_not_used->SetLineStyle(1);
   plot_ETA_b_not_used->SetLineStyle(1);
+  plot_PT_b_not_used_diff->SetLineStyle(1);
+  plot_ETA_b_not_used_diff->SetLineStyle(1);
+  plot_M_b_not_used_diff->SetLineStyle(1);
+  plot_PT_b_not_used_indiv->SetLineStyle(1);
+  plot_ETA_b_not_used_indiv->SetLineStyle(1);
+  plot_PT_b1b2->SetLineStyle(1);
+  plot_ETA_b1b2->SetLineStyle(1);
+  plot_M_b1b2->SetLineStyle(1);
   plot_sdPHI_lMET->SetLineStyle(1);
 
 
@@ -156,7 +203,8 @@ void Prueba::Finalize(const SampleFormat& summary, const std::vector<SampleForma
   plot_PT_b1->Draw("HIST");
   plot_MET->Draw("HIST");
   plot_sdETA_b1b2->Draw("HIST");
-  
+  plot_PT_dijet->Draw("HIST");
+
   //TCanvas *c2 = new TCanvas();
   //if (plot_PT_leptons->GetSumw2N() == 0) plot_PT_leptons->Sumw2(kTRUE);
   //plot_N_Merged->Scale(1.0/plot_N_Merged->Integral());
@@ -171,6 +219,9 @@ void Prueba::Finalize(const SampleFormat& summary, const std::vector<SampleForma
   plot_N_notMerged->Draw("HIST");
   plot_N_partiallyMerged->Draw("HIST");
   plot_N_fullyMerged->Draw("HIST");
+  plot_PT_dijet_no->Draw("HIST");
+  plot_ETA_dijet_no->Draw("HIST");
+  plot_M_dijet_no->Draw("HIST");
   plot_PT_dijet_partially->Draw("HIST");
   plot_ETA_dijet_partially->Draw("HIST");
   plot_M_dijet_partially->Draw("HIST");
@@ -182,6 +233,14 @@ void Prueba::Finalize(const SampleFormat& summary, const std::vector<SampleForma
   plot_M_b_dijet_fully->Draw("HIST");
   plot_PT_b_not_used->Draw("HIST");
   plot_ETA_b_not_used->Draw("HIST");
+  plot_PT_b_not_used_diff->Draw("HIST");
+  plot_ETA_b_not_used_diff->Draw("HIST");
+  plot_M_b_not_used_diff->Draw("HIST");
+  plot_PT_b_not_used_indiv->Draw("HIST");
+  plot_ETA_b_not_used_indiv->Draw("HIST");
+  plot_PT_b1b2->Draw("HIST");
+  plot_ETA_b1b2->Draw("HIST");
+  plot_M_b1b2->Draw("HIST");
   plot_sdPHI_lMET->Draw("HIST");
 
   
@@ -191,10 +250,14 @@ void Prueba::Finalize(const SampleFormat& summary, const std::vector<SampleForma
   plot_PT_b1->Write();
   plot_MET->Write();
   plot_sdETA_b1b2->Write();
+  plot_PT_dijet->Write();
   plot_N_Merged->Write();
   plot_N_notMerged->Write();
   plot_N_partiallyMerged->Write();
   plot_N_fullyMerged->Write();
+  plot_PT_dijet_no->Write();
+  plot_ETA_dijet_no->Write();
+  plot_M_dijet_no->Write();
   plot_PT_dijet_partially->Write();
   plot_ETA_dijet_partially->Write();
   plot_M_dijet_partially->Write();
@@ -206,6 +269,14 @@ void Prueba::Finalize(const SampleFormat& summary, const std::vector<SampleForma
   plot_M_b_dijet_fully->Write();
   plot_PT_b_not_used->Write();
   plot_ETA_b_not_used->Write();
+  plot_PT_b_not_used_diff->Write();
+  plot_ETA_b_not_used_diff->Write();
+  plot_M_b_not_used_diff->Write();
+  plot_PT_b_not_used_indiv->Write();
+  plot_ETA_b_not_used_indiv->Write();
+  plot_PT_b1b2->Write();
+  plot_ETA_b1b2->Write();
+  plot_M_b1b2->Write();
   plot_sdPHI_lMET->Write();
   Output->Close();
   cout << "END   Finalization" << endl;
@@ -217,7 +288,6 @@ void Prueba::Finalize(const SampleFormat& summary, const std::vector<SampleForma
 // -----------------------------------------------------------------------------
 bool Prueba::Execute(SampleFormat& sample, const EventFormat& event)
 {
-
   MAfloat32 __event_weight__ = 1.0;
   if (weighted_events_ && event.mc()!=0) __event_weight__ = event.mc()->weight();
 
@@ -279,7 +349,7 @@ bool Prueba::Execute(SampleFormat& sample, const EventFormat& event)
   //************************************************** Top reconstruction function ***************************************************
   
 
-   top_reconstruction(j1_final_state_array, j2_final_state_array, b_final_state_array, lepton_final_state_array, neutrino_final_state_array, dijet, b_dijet, reconstructed_W, b_used, b_not_used, leptons_lorentz, invisible_lorentz);
+   top_reconstruction(j1_final_state_array, j2_final_state_array, b_final_state_array, lepton_final_state_array, neutrino_final_state_array, dijet, b_dijet, reconstructed_W, b_used, b_not_used, b_not_used_diff, b_not_used_indiv, leptons_lorentz, invisible_lorentz);
 
 
   //*********************************************************** Histograms *************************************************************
@@ -328,6 +398,7 @@ bool Prueba::Execute(SampleFormat& sample, const EventFormat& event)
       plot_PT_b1->Fill(b1_final_state_array[j]->pt());
     }
 
+
   // Delta Eta (bottom_1, bottom_2) Histogram
 
     vector<set<const MCParticleFormat*> > combinations; // We create a vector with all the combinations that we can do with bottom_1 and bottom_2
@@ -369,10 +440,35 @@ bool Prueba::Execute(SampleFormat& sample, const EventFormat& event)
     }
     }
 
+    // dijet j1j2 pt Histogram
+   
+    
+     Manager()->FillHisto("PT_dijet", dijet.Pt());
+     plot_PT_dijet->Fill(dijet.Pt());
+  
+
     // MET 
    
      Manager()->FillHisto("MET", PHYSICS->Transverse->EventMET(event.mc()));
      plot_MET->Fill(PHYSICS->Transverse->EventMET(event.mc()));
+
+
+   // pt b1b2
+
+     Manager()->FillHisto("PT_b1b2", (b1_final_state_array[0]->momentum() + b2_final_state_array[0]->momentum()).Pt());
+     plot_PT_b1b2->Fill((b1_final_state_array[0]->momentum() + b2_final_state_array[0]->momentum()).Pt());
+
+
+  // ETA b1b2
+
+     Manager()->FillHisto("ETA_b1b2", (b1_final_state_array[0]->momentum() + b2_final_state_array[0]->momentum()).Eta());
+     plot_ETA_b1b2->Fill((b1_final_state_array[0]->momentum() + b2_final_state_array[0]->momentum()).Eta());
+
+
+  // M b1b2
+
+     Manager()->FillHisto("M_b1b2", (b1_final_state_array[0]->momentum() + b2_final_state_array[0]->momentum()).M());
+     plot_M_b1b2->Fill((b1_final_state_array[0]->momentum() + b2_final_state_array[0]->momentum()).M());
  
 
     // Number of total events divide in notMerged, partiallyMerged and fullyMerged
@@ -386,6 +482,16 @@ bool Prueba::Execute(SampleFormat& sample, const EventFormat& event)
 
          Manager()->FillHisto("N_Merged", 1);
          plot_N_Merged->Fill(1);
+
+         Manager()->FillHisto("PT_dijet_no", dijet.Pt());
+         plot_PT_dijet_no->Fill(dijet.Pt());
+
+         Manager()->FillHisto("ETA_dijet_no", dijet.Eta());
+         plot_ETA_dijet_no->Fill(dijet.Eta());
+
+         Manager()->FillHisto("M_dijet_no", dijet.M());
+         plot_M_dijet_no->Fill(dijet.M());
+
       }
 
       if(partiallyMerged)
@@ -438,15 +544,58 @@ bool Prueba::Execute(SampleFormat& sample, const EventFormat& event)
 
       if(!notMerged)
       {
-         // PT b-quark not used in the top reconstruction
+         // PT b-quark not used in the top reconstruction as only one TLorentzVector
    
          Manager()->FillHisto("PT_b_not_used", b_not_used.Pt());
          plot_PT_b_not_used->Fill(b_not_used.Pt());
 
-         // ETA b-quark not used in the top reconstruction
+         // ETA b-quark not used in the top reconstruction as only one TLorentzVector
    
          Manager()->FillHisto("ETA_b_not_used", b_not_used.Eta());
          plot_ETA_b_not_used->Fill(b_not_used.Eta());
+
+         // PT of b_ib_j, where b_i,b_j != b_used and PT(b_i) - PT(b_j) is minumum.  
+
+         Manager()->FillHisto("PT_b_not_used_diff", b_not_used_diff.Pt());
+         plot_PT_b_not_used_diff->Fill(b_not_used_diff.Pt());
+
+         // ETA of b_ib_j, where b_i,b_j != b_used and PT(b_i) - PT(b_j) is minumum.
+   
+         Manager()->FillHisto("ETA_b_not_used_diff", b_not_used_diff.Eta());
+         plot_ETA_b_not_used_diff->Fill(b_not_used_diff.Eta());
+
+         // M of b_ib_j, where b_i,b_j != b_used and PT(b_i) - PT(b_j) is minumum.
+   
+         Manager()->FillHisto("M_b_not_used_diff", b_not_used_diff.M());
+         plot_M_b_not_used_diff->Fill(b_not_used_diff.M());
+
+         // PT b-quark not used in the top reconstruction as individual entities
+   
+
+         for (MAuint32 l=0; l<b_final_state_array.size();l++)
+          {
+              if(l!=index_b)
+              {
+                  Manager()->FillHisto("PT_b_not_used_indiv", b_final_state_array[l]->momentum().Pt());
+                  plot_PT_b_not_used_indiv->Fill(b_final_state_array[l]->momentum().Pt());
+              }
+          }
+
+         
+
+         // ETA b-quark not used in the top reconstruction as individual entities
+   
+         for (MAuint32 l=0; l<b_final_state_array.size();l++)
+          {
+              if(l!=index_b)
+              {
+                  Manager()->FillHisto("ETA_b_not_used_indiv", b_final_state_array[l]->momentum().Eta());
+                  plot_ETA_b_not_used_indiv->Fill(b_final_state_array[l]->momentum().Eta());
+              }
+          }
+
+
+
       }
 
 

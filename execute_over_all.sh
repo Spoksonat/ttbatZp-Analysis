@@ -12,4 +12,4 @@ while read -r p; do
     #echo "${bar}"
 done <inputs_todos.txt
 
-root -q merge_histos.cxx
+#root -q merge_histos.cxx
