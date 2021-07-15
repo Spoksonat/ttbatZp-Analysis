@@ -41,12 +41,18 @@ After the execution of the analysis code, some .root files are generated with th
 
 Joining the results
 ---------
-In addition to the analysis code, there is a file that joins all the results obtained in a single file (a single histogram for each kinetic variable). This file is called merge_histos.cxx. The only thing to keep in mind is that you only have to change three variables in the code: "names_files", "names_files_wo_ext" and "names", in order to join the .root files specified in these variables. "names_files" contains the names of the .root files that you will join. "names_files_wo_text" contains the names of the signals and backgrounds (in the same order as in "names_files") but in a LaTeX format (the backslash is changed by a double backslash). "names" contains the names of the signals and backgrounds (in the same order as in "names_files") in a LaTeX format, but the backslash is changed for # and the $ simbols dissapear. For example, if signals=("ttbarh" "ttbarbbar"), then:
+In addition to the analysis code, there is a file that joins all the results obtained in a single file (a single histogram for each kinetic variable). This file is called merge_histos.cxx. The only thing to keep in mind is that you only have to change five variables in the code: "names_files", "names_files_wo_ext", "names", "colors" and linestyles, in order to join the .root files specified in these variables. "names_files" contains the names of the .root files that you will join. "names_files_wo_text" contains the names of the signals and backgrounds (in the same order as in "names_files") but in a LaTeX format (the backslash is changed by a double backslash). "names" contains the names of the signals and backgrounds (in the same order as in "names_files") in a LaTeX format, but the backslash is changed for # and the $ simbols dissapear. "colors" are the line colors for each signal and background in the joined histograms. You can find the numerical color codes in https://root.cern.ch/doc/master/classTAttLine.html (section: Line Color). "linestyles" are the linestyles for each signal and background in the joined histograms. you can find the numerical linestyle codes in https://root.cern.ch/doc/master/classTAttLine.html (section: Line Style). 
+
+For example, if signals=("ttbarh" "ttbarbbar"), then:
 
 * vector<<std::string>> names_files {"ttbarh.root", "ttbarbbar.root"};
 * vector<<std::string>> names_files_wo_ext {"$t\\\\bar{t}h$", "$t\\\\bar{t}b\\\\bar{b}$"};
 * vector<<std::string>> names {"t#bar{t}h", "t#bar{t}b#bar{b}"};
+* vector<<int>> colors {3, 6}; 
+* vector<<int>> linestyles {1, 1};
 
+  
+  
 Once the code has been modified, you have to run the code via root, with the command: root -q merge_histos.cxx. The resulting file will be called "joined.root"
 
 
