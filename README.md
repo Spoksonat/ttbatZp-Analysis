@@ -8,7 +8,7 @@ There are two levels for the analysis:
 
 In each folder, you will find the .h and .cpp files (mandatory for run MadAnalysis) as well as a bash script (execute_all.sh). 
 
-.h and .cpp files 
+The .h and .cpp files 
 ---------
 These are the files that must be inside the Analysis_Folder/Build/SampleAnalyzer/User/Analyzer/ folder created by MadAnalysis, where "Analysis_Folder" is the name of the folder created automatically via MadAnalysis Expert Mode. At Madgraph level, please set Analysis_Folder = Prueba and, at Delphes level, Analysis_Folder = Prueba_Delphes. Please DO NOT change the name of the .h and .cpp files. 
 
@@ -27,10 +27,28 @@ where 1<i<60 and 1<j<90. Then you have to set:
 * common_path="/disco3/SIMULACIONES/with_delphes/"
 
 
-Download
+How to run the analysis code in MadAnalysis
 ---------
-The latest binaries and source of Doxygen can be downloaded from:
-* https://www.doxygen.nl/
+1. Move to Analysis_Folder/Build folder
+2. source setup.sh 
+3. make 
+4. ./execute_all.sh OR  nohup ./execute_all.sh & (to run the process in second plane)
+
+
+Results
+---------
+After the execution of the analysis code, some .root files are generated with the histograms produced by the analysis code. There are as many .root files as signals and backgrounds defined in the bash file. For example, if signals=("ttbarh" "ttbarbbar") in the bash file, then the files ttbarh.root and ttbarbbar.root files will be generated afther the execution of the analysis code. 
+
+Joining the results
+---------
+In addition to the analysis code, there is a file that joins all the results obtained in a single file (a single histogram for each kinetic variable). This file is called merge_histos.cxx. The only thing to keep in mind is that you only have to change three variables in the code: "names_files", "names_files_wo_ext" and "names", in order to join the .root files specified in these variables. "names_files" contains the names of the .root files that you will join. "names_files_wo_text" contains the names of the signals and backgrounds (in the same order as in "names_files") but in a LaTeX format (the backslash is changed by a double backslash). "names" contains the names of the signals and backgrounds (in the same order as in "names_files") in a LaTeX format, but the backslash is changed for # and the $ simbols dissapear. For example, if signals=("ttbarh" "ttbarbbar"), then:
+
+vector<std::string> names_files {"ttbarh.root", "ttbarbbar.root"};
+vector<std::string> names_files_wo_ext {"$t\\bar{t}h$", "$t\\bar{t}b\\bar{b}$"};
+vector<std::string> names {"t#bar{t}h", "t#bar{t}b#bar{b}"};
+
+Once the code has been modified, you have to run the code via root, with the command: root -q merge_histos.cxx. The resulting file will be called "joined.root"
+
 
 Developers
 ---------
@@ -43,28 +61,6 @@ Developers
 * Install: Please read the installation section of the manual (https://www.doxygen.nl/manual/install.html)
 
 * Project stats: https://www.openhub.net/p/doxygen
-
-Issues, bugs, requests, ideas
-----------------------------------
-Use the [issue](https://github.com/doxygen/doxygen/issues) tracker to report bugs.
-
-Comms
-----------------------------------
-### Mailing Lists ###
-
-There are three mailing lists:
-
-* doxygen-announce@lists.sourceforge.net     - Announcement of new releases only
-* doxygen-users@lists.sourceforge.net        - for doxygen users
-* doxygen-develop@lists.sourceforge.net      - for doxygen developers
-* To subscribe follow the link to
-    * https://sourceforge.net/projects/doxygen/
-
-Source Code
-----------------------------------
-In May 2013, Doxygen moved from
-subversion to git hosted at GitHub
-* https://github.com/doxygen/doxygen
 
 Enjoy,
 
