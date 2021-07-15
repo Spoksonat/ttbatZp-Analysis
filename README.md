@@ -48,8 +48,8 @@ For example, if signals=("ttbarh" "ttbarbbar"), then:
 * vector<<std::string>> names_files {"ttbarh.root", "ttbarbbar.root"};
 * vector<<std::string>> names_files_wo_ext {"$t\\\\bar{t}h$", "$t\\\\bar{t}b\\\\bar{b}$"};
 * vector<<std::string>> names {"t#bar{t}h", "t#bar{t}b#bar{b}"};
-* vector<<int>> colors {3, 6}; 
-* vector<<int>> linestyles {1, 1};
+* vector<< int >> colors {3, 6}; 
+* vector<< int >> linestyles {1, 1};
 
   
   
