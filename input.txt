@@ -1,1 +1,0 @@
-/disco3/SIMULACIONES/ttbarZprime_Manuel/ttbarbbar_noh/Events/run_01/unweighted_events.lhe.gz
