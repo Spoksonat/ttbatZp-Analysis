@@ -52,16 +52,8 @@ Once the code has been modified, you have to run the code via root, with the com
 
 Developers
 ---------
-* Linux & Windows and MacOS Build Status: <a href="https://github.com/doxygen/doxygen/actions"><img alt="Github Actions Build Status" src="https://github.com/doxygen/doxygen/workflows/CMake%20Build%20for%20Doxygen/badge.svg"></a>
-
-* Coverity Scan Build Status: <a href="https://scan.coverity.com/projects/2860"> <img alt="Coverity Scan Build Status" src="https://scan.coverity.com/projects/2860/badge.svg"/> </a>
-
-* Doxygen's Doxygen Documentation: <a href="https://codedocs.xyz/doxygen/doxygen/"><img src="https://codedocs.xyz/doxygen/doxygen.svg"/></a>
-
-* Install: Please read the installation section of the manual (https://www.doxygen.nl/manual/install.html)
-
-* Project stats: https://www.openhub.net/p/doxygen
+* Manuel Fernando Sánchez Alarcón. Personal Webpage: https://spoksonat.github.io/Personal_Webpage/
 
 Enjoy,
 
-Dimitri van Heesch (doxygen at gmail.com)
+Manuel Fernando Sánchez Alarcón.
