@@ -3,7 +3,7 @@
 #jobs=(60 3 4 5)
 signals=("ttbarh" "ttbarbbar_noh")
 jobs=(6 6)
-extension="/Events/run_01/tag_1_delphes_events.root"
+extension="/Events/run_01/unweighted_events.lhe.gz"
 #common_path="/disco4/SIMULACIONES/from_disco3/with_delphes/"
 common_path="/disco3/SIMULACIONES/with_delphes/"
 
