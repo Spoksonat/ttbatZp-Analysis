@@ -5,7 +5,7 @@ signals=("ttbarh" "ttbarbbar_noh")
 jobs=(6 6)
 extension="/Events/run_01/unweighted_events.lhe.gz"
 #common_path="/disco4/SIMULACIONES/from_disco3/with_delphes/"
-common_path="/disco3/SIMULACIONES/with_delphes/"
+common_path="/disco2/SIMULACIONES/from_disco3/signals_Manuel"
 
 for i in ${!signals[@]}; do 
   rm ${signals[i]}.txt
