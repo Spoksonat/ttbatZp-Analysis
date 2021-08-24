@@ -1,5 +1,7 @@
 import ROOT
 from ROOT import TLorentzVector, TH1F
+import numpy as np
+from sklearn.model_selection import train_test_split
 
 def top_reconstruction(j1, j2, b):
     global dijet
@@ -89,8 +91,9 @@ def top_reconstruction(j1, j2, b):
 def PT(TLV):
     return TLV.Pt()
 
-signals = ["ttbarh", "ttbarbbar_noh"]
-jobs = [1, 1]
+entries = ["ttbarh", "ttbarbbar_noh", "ttbarttbar", "Zprime_bbar_350"]
+type_entries = ["bkg", "bkg", "bkg", "signal" ]
+jobs = [1, 1, 1, 1]
 
 c1 = ROOT.TCanvas("c1", "Titulo")
 plot_deltaR_b1b2 = TH1F("deltaR_b1b2", "deltaR_b1b2", 100, 0.0, 6.3)
@@ -131,12 +134,15 @@ plot_Eff_mu = TH1F("Eff_mu", "Eff_mu", 6, 0.5, 6.5)
 plot_Eff_e = TH1F("Eff_e", "Eff_e", 6, 0.5, 6.5)
 plot_Delta_PT_b_alpha_b_beta = TH1F("Delta_PT_b_alpha_b_beta", "Delta_PT_b_alpha_b_beta", 100, 0.0, 1000.0)
 
-for n_signal, signal in enumerate(signals):
+arrs = []
 
+for n_signal, signal in enumerate(entries):
+
+  arr1 = []
   f = ROOT.TFile(signal + ".root", "recreate")
 
   for ind in range(1,jobs[n_signal]+1):
-    directory= str("/disco3/SIMULACIONES/with_delphes/" + signal + "/" + signal + "_" + str(ind) + "/Events/run_01/tag_1_delphes_events.root")
+    directory= str("/disco4/SIMULACIONES/from_disco3/with_delphes/" + signal + "/" + signal + "_" + str(ind) + "/Events/run_01/tag_1_delphes_events.root")
     File = ROOT.TChain("Delphes;1")
     File.Add(directory)
     Number = File.GetEntries()
@@ -196,19 +202,21 @@ for n_signal, signal in enumerate(signals):
         leptons = electrons + muons
 
 
-        if (len(bjets) >= 3 and len(jets) >= 2 and len(leptons) != 0):
+        if (len(bjets) == 4 and len(jets) >= 2 and len(leptons) != 0):
 
             jets.sort(reverse = True, key=PT)
             bjets.sort(reverse = True, key=PT)
             j1, j2 = jets[0], jets[1]
             b1, b2 = bjets[0], bjets[1]
             top_reconstruction(j1, j2, bjets)
+
+            """
             plot_PT_b1.Fill(b1.Pt())
 
             for lepton in leptons:
                 plot_PT_leptons.Fill(lepton.Pt())
 
-            #MET
+            MET
             for MET in METs:
                 plot_MET.Fill(MET.Pt())
 
@@ -220,10 +228,19 @@ for n_signal, signal in enumerate(signals):
 
             if(fullyMerged):
                 plot_N_Merged.Fill(3)
+        
+            """
 
+            leptons_tot = np.sum(np.array(leptons))
+            MET = np.sum(np.array(METs))
 
-
-
+            
+            row = np.array([bjets[0].Pt(), bjets[1].Pt(), bjets[2].Pt(), bjets[3].Pt(), jets[0].Pt(), jets[1].Pt(), np.sum(np.array(leptons)).Pt(), (bjets[0] + bjets[1]).M(), (bjets[0] + bjets[2]).M(), (bjets[0] + bjets[3]).M(), (bjets[1] + bjets[2]).M(), (bjets[1] + bjets[3]).M(), (bjets[2] + bjets[3]).M(), (jets[0] + jets[1]).M(), (bjets[0] + leptons_tot + MET).Mt(), (bjets[1] + leptons_tot + MET).Mt(), (bjets[2] + leptons_tot + MET).Mt(), (bjets[3] + leptons_tot + MET).Mt(), (leptons_tot + MET).Mt(), (bjets[0].Eta() - bjets[1].Eta()), (bjets[0].Eta() - bjets[2].Eta()), (bjets[0].Eta() - bjets[3].Eta()), (bjets[1].Eta() - bjets[2].Eta()), (bjets[1].Eta() - bjets[3].Eta()), (bjets[2].Eta() - bjets[3].Eta()), bjets[0].DeltaPhi(bjets[1]), bjets[0].DeltaPhi(bjets[2]), bjets[0].DeltaPhi(bjets[3]), bjets[1].DeltaPhi(bjets[2]), bjets[1].DeltaPhi(bjets[3]), bjets[2].DeltaPhi(bjets[3]), bjets[0].DeltaPhi(leptons_tot), bjets[1].DeltaPhi(leptons_tot), bjets[2].DeltaPhi(leptons_tot), bjets[3].DeltaPhi(leptons_tot), bjets[0].DeltaR(bjets[1]), bjets[0].DeltaR(bjets[2]), bjets[0].DeltaR(bjets[3]), bjets[1].DeltaR(bjets[2]), bjets[1].DeltaR(bjets[3]), bjets[2].DeltaR(bjets[3]), jets[0].DeltaR(jets[1]), bjets[0].DeltaR(leptons_tot), bjets[1].DeltaR(leptons_tot), bjets[2].DeltaR(leptons_tot), bjets[3].DeltaR(leptons_tot), MET.Pt()])
+            arr1.append(row)
+            
+            
+  arrs.append(arr1)          
+  
   plot_deltaR_b1b2.Draw("HIST")
   plot_PT_leptons.Draw("HIST")
   plot_ETA_leptons.Draw("HIST")
@@ -364,3 +381,28 @@ for n_signal, signal in enumerate(signals):
   plot_Eff_mu.Reset("ICESM")
   plot_Eff_e.Reset("ICESM")
   plot_Delta_PT_b_alpha_b_beta.Reset("ICESM")
+
+
+arrs = np.array(arrs)
+#print(np.shape(arrs))
+#print(np.shape(arrs[3]))
+bkg1 = np.array(arrs[0])
+bkg2 = np.array(arrs[1])
+bkg3 = np.array(arrs[2])
+signal1, signal1_vsize = arrs[3], np.shape(arrs[3])[0]
+
+pred1 = np.concatenate((signal1, bkg1[:int(signal1_vsize/3.0), :], bkg2[:int(signal1_vsize/3.0), :], bkg3[:signal1_vsize - 2*int(signal1_vsize/3.0), :]), axis=0)
+label1 = np.zeros(np.shape(pred1)[0])
+label1[:signal1_vsize] = 1
+
+
+
+#print(np.shape(pred1))
+#print(np.shape(label1))
+#print(pred1)
+#print(label1)
+    
+
+
+
+
