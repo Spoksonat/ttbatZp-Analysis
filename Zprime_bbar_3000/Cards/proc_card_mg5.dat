@@ -20,10 +20,8 @@
 #*     run as ./bin/mg5_aMC  filename                       *
 #*                                                          *
 #************************************************************
-#set max_t_for_channel 99
 set low_mem_multicore_nlo_generation True
 set default_unset_couplings 99
-#set zerowidth_tchannel True
 set group_subprocesses Auto
 set ignore_six_quark_processes False
 set loop_optimized_output True
@@ -41,16 +39,14 @@ define vl = ve vm vt
 define vl~ = ve~ vm~ vt~
 define neutrino = vl vl~
 define bottom = b b~
-#generate p p > t t~ zp , (zp > b b~), (t > b j j), (t~ > b~ l- vl~)
-#add process p p > t t~ zp , (zp > b b~), (t > b l+ vl), (t~ > b~ j j)
 generate p p > t t~ zp, (t > w+ bottom, w+ > j j), (t~ > w- bottom, w- > lepton neutrino), (zp > b b~)
 add process p p > t t~ zp, (t > w+ bottom, w+ > lepton neutrino), (t~ > w- bottom, w- > j j), (zp > b b~)
 output FOLDEREVENTS/SUBFOLDERNAME_SEED -f
 launch -m
 NUMBERCORES
-#shower = Pythia8
-#detector = Delphes
+shower = Pythia8
+detector = Delphes
 FOLDEREVENTS/ParamCard/param_card.dat
 FOLDEREVENTS/Cards/run_card.dat
-#FOLDEREVENTS/Cards/pythia8_card.dat
-#FOLDEREVENTS/Cards/delphes_card.dat
+FOLDEREVENTS/Cards/pythia8_card.dat
+FOLDEREVENTS/Cards/delphes_card.dat
