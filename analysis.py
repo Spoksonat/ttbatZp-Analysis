@@ -7,12 +7,18 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
 from bcml4pheno import bcml_model
 from bcml4pheno import get_elijah_ttbarzp_cs
+from bcml4pheno import get47Dfeatures
 from bcml4pheno import get_settings
 import scipy.interpolate
 import matplotlib.pyplot as plt
 from datetime import datetime
 from bcml4pheno import cross_section_helper
+from xgboost import XGBClassifier
 
+
+#indxs = [0,25,26,37,16,3,27,28,17,23,39,35,2,18,1,21,34]
+indxs = [0, 25, 36, 26, 1, 27, 35, 37, 16, 28, 2, 39, 5, 18, 29, 33, 11, 40, 22, 3]
+indxs = indxs[:19]
 
 def top_reconstruction(j1, j2, b):
     global dijet
@@ -104,8 +110,8 @@ def PT(TLV):
 
 entries = ["ttbarh", "ttbarttbar" ,"ttbarbbar_noh", "Zprime_bbar_350", "Zprime_bbar_1000", "Zprime_bbar_3000"]
 type_entries = ["bkg", "bkg", "bkg", "signal", "signal", "signal" ]
-jobs = [99, 99, 99, 19, 19, 19]
-#jobs = [1, 1, 1, 1, 1, 1]
+#jobs = [99, 99, 99, 19, 19, 19]
+jobs = [5, 5, 5, 5, 5, 5]
 
 c1 = ROOT.TCanvas("c1", "Titulo")
 plot_deltaR_b1b2 = TH1F("deltaR_b1b2", "deltaR_b1b2", 100, 0.0, 6.3)
@@ -250,10 +256,14 @@ for n_signal, signal in enumerate(entries):
 
             leptons_tot = np.sum(np.array(leptons))
             MET = np.sum(np.array(METs))
-
+            #indxs = [0,1,2,3,4,5,6,7,8,9,10,11,14,15,16,17,18,25,35,36,38,39,40,41,42,43,44,45,46]
             
-            row = np.array([bjets[0].Pt(), bjets[1].Pt(), bjets[2].Pt(), bjets[3].Pt(), jets[0].Pt(), jets[1].Pt(), np.sum(np.array(leptons)).Pt(), (bjets[0] + bjets[1]).M(), (bjets[0] + bjets[2]).M(), (bjets[0] + bjets[3]).M(), (bjets[1] + bjets[2]).M(), (bjets[1] + bjets[3]).M(), (bjets[2] + bjets[3]).M(), (jets[0] + jets[1]).M(), (bjets[0] + leptons_tot + MET).Mt(), (bjets[1] + leptons_tot + MET).Mt(), (bjets[2] + leptons_tot + MET).Mt(), (bjets[3] + leptons_tot + MET).Mt(), (leptons_tot + MET).Mt(), (bjets[0].Eta() - bjets[1].Eta()), (bjets[0].Eta() - bjets[2].Eta()), (bjets[0].Eta() - bjets[3].Eta()), (bjets[1].Eta() - bjets[2].Eta()), (bjets[1].Eta() - bjets[3].Eta()), (bjets[2].Eta() - bjets[3].Eta()), bjets[0].DeltaPhi(bjets[1]), bjets[0].DeltaPhi(bjets[2]), bjets[0].DeltaPhi(bjets[3]), bjets[1].DeltaPhi(bjets[2]), bjets[1].DeltaPhi(bjets[3]), bjets[2].DeltaPhi(bjets[3]), bjets[0].DeltaPhi(leptons_tot), bjets[1].DeltaPhi(leptons_tot), bjets[2].DeltaPhi(leptons_tot), bjets[3].DeltaPhi(leptons_tot), bjets[0].DeltaR(bjets[1]), bjets[0].DeltaR(bjets[2]), bjets[0].DeltaR(bjets[3]), bjets[1].DeltaR(bjets[2]), bjets[1].DeltaR(bjets[3]), bjets[2].DeltaR(bjets[3]), jets[0].DeltaR(jets[1]), bjets[0].DeltaR(leptons_tot), bjets[1].DeltaR(leptons_tot), bjets[2].DeltaR(leptons_tot), bjets[3].DeltaR(leptons_tot), MET.Pt()])
-            arr1.append(row)
+            if(abs(bjets[0].Eta())<2.5 and abs(bjets[1].Eta())<2.5 and bjets[0].Pt()>30.0 and bjets[1].Pt()>30.0):
+
+                row = np.array([bjets[0].Pt(), bjets[1].Pt(), bjets[2].Pt(), bjets[3].Pt(), (bjets[0].Eta() - bjets[1].Eta()), (bjets[0].Eta() - bjets[2].Eta()), (bjets[0].Eta() - bjets[3].Eta()), (bjets[1].Eta() - bjets[2].Eta()), (bjets[1].Eta() - bjets[3].Eta()), (bjets[2].Eta() - bjets[3].Eta()), bjets[0].DeltaPhi(bjets[1]), bjets[0].DeltaPhi(bjets[2]), bjets[0].DeltaPhi(bjets[3]), bjets[1].DeltaPhi(bjets[2]), bjets[1].DeltaPhi(bjets[3]), bjets[2].DeltaPhi(bjets[3]),bjets[0].DeltaR(bjets[1]), bjets[0].DeltaR(bjets[2]), bjets[0].DeltaR(bjets[3]), bjets[1].DeltaR(bjets[2]), bjets[1].DeltaR(bjets[3]), bjets[2].DeltaR(bjets[3]), MET.Pt(), np.sum(np.array(leptons)).Pt(), (leptons_tot + MET).Mt(), (bjets[0] + bjets[1]).M(), (bjets[0] + bjets[2]).M(), (bjets[0] + bjets[3]).M(), (bjets[1] + bjets[2]).M(), (bjets[1] + bjets[3]).M(), (bjets[2] + bjets[3]).M(), (bjets[0] + leptons_tot + MET).Mt(), (bjets[1] + leptons_tot + MET).Mt(), (bjets[2] + leptons_tot + MET).Mt(), (bjets[3] + leptons_tot + MET).Mt(), (jets[0] + jets[1]).M(), jets[0].Pt(), jets[1].Pt(), jets[0].DeltaR(jets[1]), bjets[0].DeltaR(leptons_tot), bjets[1].DeltaR(leptons_tot), bjets[2].DeltaR(leptons_tot), bjets[3].DeltaR(leptons_tot), bjets[0].DeltaPhi(leptons_tot), bjets[1].DeltaPhi(leptons_tot), bjets[2].DeltaPhi(leptons_tot), bjets[3].DeltaPhi(leptons_tot)])
+                #row = np.array([bjets[0].Pt(), bjets[1].Pt(), bjets[2].Pt(), bjets[3].Pt(), jets[0].Pt(), jets[1].Pt(), (bjets[0] + bjets[3]).M(), (bjets[1] + bjets[3]).M(), (bjets[2] + bjets[3]).M(), bjets[0].DeltaR(bjets[3]), bjets[1].DeltaR(bjets[3]), bjets[2].DeltaR(bjets[3]), bjets[3].DeltaR(leptons_tot), MET.Pt()])
+                arr1.append(row[indxs])
+                #arr1.append(row)
             
             
   arrs.append(arr1)          
@@ -410,6 +420,13 @@ signal1, signal1_vsize = np.array(arrs[3]), np.shape(np.array(arrs[3]))[0]
 signal2, signal2_vsize = np.array(arrs[4]), np.shape(np.array(arrs[4]))[0]
 signal3, signal3_vsize = np.array(arrs[5]), np.shape(np.array(arrs[5]))[0]
 
+print("nevents sgn1: ", np.shape(signal1))
+print("nevents sgn2: ", np.shape(signal2))
+print("nevents sgn3: ", np.shape(signal3))
+print("nevents bkg1: ", np.shape(bkg1))
+print("nevents bkg2: ", np.shape(bkg2))
+print("nevents bkg3: ", np.shape(bkg3))
+
 pred1 = np.concatenate((signal1, bkg1[:int(signal1_vsize/3.0), :], bkg2[:int(signal1_vsize/3.0), :], bkg3[:signal1_vsize - 2*int(signal1_vsize/3.0), :]), axis=0)
 pred2 = np.concatenate((signal2, bkg1[:int(signal2_vsize/3.0), :], bkg2[:int(signal2_vsize/3.0), :], bkg3[:signal2_vsize - 2*int(signal2_vsize/3.0), :]), axis=0)
 pred3 = np.concatenate((signal3, bkg1[:int(signal3_vsize/3.0), :], bkg2[:int(signal3_vsize/3.0), :], bkg3[:signal3_vsize - 2*int(signal3_vsize/3.0), :]), axis=0)
@@ -446,9 +463,11 @@ logreg_m3000_model.fit(trainPredictors_m3000, trainLabels_m3000)
 
 
 masses, sig_css, bg_css = get_elijah_ttbarzp_cs()
+zp_cs = cross_section_helper(masses, sig_css, bg_css, mass_units='GeV')
 
 masses = [350, 1000, 3000]
-sig_css = [0.001813, 0.0002066, 3.114E-6]
+sig_css = [zp_cs.sig_cs(mass) for mass in masses]
+#sig_css = [0.001813, 0.0002066, 3.114E-6]
 
 conv = 10**15/10**12 # conv * lumi (in fb-1)*crossx (im pb) = # of events
 lumi = 3000
@@ -501,7 +520,7 @@ logreg_models = [logreg_m350_model, logreg_m1000_model, logreg_m3000_model]
 
 time_before = getTime()
 
-logreg_sigs_nosepbg = [model.significance(signal_yield, background_yield, tpr=model.tpr(testLabels[i], preds=testPredictors[i]), fpr=model.tpr(testLabels[i], preds=testPredictors[i]), sepbg=False) for i, (model, signal_yield) in enumerate(zip(logreg_models, signal_yields))]
+logreg_sigs_nosepbg = [model.significance(signal_yield, background_yield, tpr=model.tpr(testLabels[i], preds=testPredictors[i]), fpr=model.fpr(testLabels[i], preds=testPredictors[i]), sepbg=False) for i, (model, signal_yield) in enumerate(zip(logreg_models, signal_yields))]
 
 for sig, mass in zip(logreg_sigs_nosepbg, masses):
     print(f"Z' mass = {mass} GeV --> logistic regression gives significance of {round(sig, 3)} sigma", "w/o separated backgrounds")
@@ -569,6 +588,141 @@ with plt.rc_context(get_settings()):
         plt.gca().set_xlim(0, 1)
         plt.legend()
         plt.savefig(f'log_reg_m{masses[i]}GeV_opt_hist', dpi=200, bbox_inches='tight')
+        plt.clf()
+
+##########################
+
+time_before = getTime(form='m')
+xgradboost_m350G_model = bcml_model(
+    make_pipeline(StandardScaler(), 
+                  XGBClassifier(n_estimators=250, max_depth=7, learning_rate=0.05, nthread=4, use_label_encoder=False))); #n_estimators=250, max_depth=7, learning_rate=0.1
+xgradboost_m350G_model.fit(trainPredictors_m350, trainLabels_m350)
+time_after = getTime(form='m')
+print(f"(Runtime: {round(time_after - time_before,3)} minutes)")
+
+time_before = getTime(form='m')
+xgradboost_m1000G_model = bcml_model(
+    make_pipeline(StandardScaler(), 
+                  XGBClassifier(n_estimators=250, max_depth=7, learning_rate=0.05, nthread=4, use_label_encoder=False)));
+xgradboost_m1000G_model.fit(trainPredictors_m1000, trainLabels_m1000)
+time_after = getTime(form='m')
+print(f"(Runtime: {round(time_after - time_before,3)} minutes)")
+
+time_before = getTime(form='m')
+xgradboost_m3000G_model = bcml_model(
+    make_pipeline(StandardScaler(), 
+                  XGBClassifier(n_estimators=250, max_depth=7, learning_rate=0.05, nthread=4, use_label_encoder=False)));
+xgradboost_m3000G_model.fit(trainPredictors_m3000, trainLabels_m3000)
+time_after = getTime(form='m')
+print(f"(Runtime: {round(time_after - time_before,3)} minutes)")
+
+xgradboost_models = [
+    xgradboost_m350G_model, xgradboost_m1000G_model, xgradboost_m3000G_model]
+
+time_before = getTime()
+xgradboost_sigs_nosepbg = [model.significance(signal_yield, background_yield, tpr=model.tpr(testLabels[i], preds=testPredictors[i]), fpr=model.fpr(testLabels[i], preds=testPredictors[i]), sepbg=False) for i, (model, signal_yield) in enumerate(zip(xgradboost_models, signal_yields))]
+
+for sig, mass in zip(xgradboost_sigs_nosepbg, masses):
+    print(f"Z' mass = {mass} GeV --> gradient boosting gives significance of {round(sig, 3)} sigma",
+          "w/o separated backgrounds")
+time_after = getTime()
+print(f"(Runtime: {time_after - time_before} seconds)")
 
 
+time_before = getTime(form='m')
+xgradboost_opt_results_nosepbg = [model.best_threshold(signal_yield, background_yield, testPredictors[i], testLabels[i], sepbg=False) for i, (model, signal_yield) in enumerate(zip(xgradboost_models, signal_yields))]
+
+xgradboost_opt_sigs_nosepbg = [result[1] for result in xgradboost_opt_results_nosepbg]
+for sig, mass in zip(xgradboost_opt_sigs_nosepbg, masses):
+    print(f"Z' mass = {mass} GeV --> gradient boosting forests gives optimized sign. of {round(sig, 3)} sigma",
+          "w/o separated backgrounds")
+time_after = getTime(form='m')
+print(f"(Runtime: {round(time_after - time_before,3)} minutes)")
+
+for mass, result, sig_cs in zip(masses, xgradboost_opt_results_nosepbg, sig_css):
+    print(f"for mass = {mass} GeV, thresh = {round(result[0],6)}, tpr = {round(result[2],5)} and fpr = {round(result[3],9)}",
+          f"so yield is {int(lumi * sig_cs * conv * result[2])} and sig. sign. is {round(result[1],3)}")
+
+xgradboost_sigs_nosepbg_f = scipy.interpolate.interp1d(masses, np.log10(xgradboost_sigs_nosepbg), kind='quadratic')
+xgradboost_opt_sigs_nosepbg_f = scipy.interpolate.interp1d(masses, np.log10(xgradboost_opt_sigs_nosepbg), kind='quadratic')
+logreg_opt_sigs_nosepbg_f = scipy.interpolate.interp1d(masses, np.log10(logreg_opt_sigs_nosepbg), kind='quadratic')
+
+#xgradboost_sigs_nosepbg_f = scipy.interpolate.interp1d(masses, xgradboost_sigs_nosepbg, kind='quadratic')
+#xgradboost_opt_sigs_nosepbg_f = scipy.interpolate.interp1d(masses, xgradboost_opt_sigs_nosepbg, kind='quadratic')
+
+masses, sig_css, bg_css = get_elijah_ttbarzp_cs()
+zp_cs = cross_section_helper(masses, sig_css, bg_css, mass_units='GeV')
+max_mass = zp_cs.absolute_max_mass_sens()
+
+with plt.rc_context(get_settings()):
+    plt.plot([max_mass for i in range(2)], np.logspace(-2, 1.5, 2), label=r'Theoretical $5\sigma$ Limit', c='black')
+    plt.plot(sample_masses, [5 for m in sample_masses], label=r'5$\sigma$', c='blue')
+    plt.plot(sample_masses, [1.645 for m in sample_masses], label=r'90% confidence', c='cornflowerblue')
+    plt.plot(
+        sample_masses, [10**xgradboost_sigs_nosepbg_f(m) for m in sample_masses], 
+        label='Gradient Boosting (No b.g. sep.)', 
+        c='tab:purple')
+    plt.plot(
+        sample_masses, [10**xgradboost_opt_sigs_nosepbg_f(m) for m in sample_masses], 
+        label='Gradient Boosting (No b.g. sep., opt. thresh.)', 
+        c='tab:purple', linestyle='--')
+    plt.ylabel('Signal Significance');
+    plt.xlabel(r"$Z'$ mass $m_{Z'}$ (GeV)");
+    plt.yscale('log')
+    plt.legend()
+    plt.savefig("grad_boost_sigs.png", dpi=200, bbox_inches='tight')
+    plt.clf()
+
+
+with plt.rc_context(get_settings()):
+    plt.plot([max_mass for i in range(2)], np.logspace(-2.5, 2, 2), label=r'Theoretical $5\sigma$ Limit', c='black')
+    plt.plot(sample_masses, [5 for m in sample_masses], label=r'5$\sigma$', c='blue')
+    plt.plot(sample_masses, [1.645 for m in sample_masses], label=r'90% confidence', c='cornflowerblue')
+    plt.plot(
+        sample_masses, [10**logreg_opt_sigs_nosepbg_f(m) for m in sample_masses], 
+        label='Logistic Regression', 
+        c='red', linestyle='-.')
+    plt.plot(
+        sample_masses, [10**xgradboost_opt_sigs_nosepbg_f(m) for m in sample_masses], 
+        label='Gradient Boosting', 
+        c='tab:purple', linestyle='-.')
+    plt.ylabel('Signal Significance');
+    plt.xlabel(r"$Z'$ mass $m_{Z'}$ (GeV)");
+    plt.yscale('log')
+    plt.legend()
+    plt.savefig("all_model_sigs.png", dpi=200, bbox_inches='tight')
+
+    plt.clf()
+
+"""
+#max_feature_len = max([len(feature) for feature in get47Dfeatures()[indxs]])
+max_feature_len = max([len(feature) for feature in get47Dfeatures()])
+
+def printFeatureImportances(feature_importances, num=47, hasSign=False):
+    feature_importances = feature_importances[:num]
+    for i, (feature, importance) in enumerate(feature_importances):
+        if hasSign:
+            sign = '+' if importance >= 0 else '-'
+            print('{4:2}. {0:{1}} {3}{2:.4f}'.format(feature, max_feature_len + 3, np.abs(importance), sign, i+1))
+        else:
+            print('{3:2}. {0:{1}} {2:.4f}'.format(feature, max_feature_len + 3, importance, i+1))
+
+
+print(get47Dfeatures())
+
+#xgb_feature_importances = [model.sorted_feature_importance(get47Dfeatures()[indxs]) for model in xgradboost_models]
+xgb_feature_importances = [model.sorted_feature_importance(get47Dfeatures()) for model in xgradboost_models]
+
+
+for mass, feature_importance in zip(masses, xgb_feature_importances):
+    print(f"Z' mass = {mass}")
+    printFeatureImportances(feature_importance)
+    if mass != masses[-1]:
+        print()
+
+"""
+
+
+
+    
 
